@@ -4,10 +4,10 @@ import com.comforest.core.auth.Token
 import com.comforest.core.auth.UserId
 
 interface TokenCommandRepository {
-    fun saveAccessToken(token: Token)
-    fun saveRefreshToken(token: Token)
+    suspend fun saveAccessToken(token: Token)
+    suspend fun saveRefreshToken(token: Token)
 
-    fun removeRefreshToken(token: Token)
+    suspend fun removeRefreshToken(token: Token)
 
-    fun deleteAllToken(userId: UserId)
+    suspend fun deleteAllToken(userId: UserId)
 }

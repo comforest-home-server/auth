@@ -1,6 +1,6 @@
 package com.comforest.core.auth
 
 interface AuthQueryRepository {
-    fun findAuthUser(id: UserId): AuthUser?
-    fun findAuthUser(socialType: LoginType, socialId: String): AuthUser?
+    suspend fun findAuthUser(id: UserId): AuthUser?
+    suspend fun findAuthUser(socialType: LoginType, socialId: String): AuthUser?
 }

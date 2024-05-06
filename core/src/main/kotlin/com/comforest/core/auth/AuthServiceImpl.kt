@@ -14,7 +14,7 @@ internal class AuthServiceImpl(
 ) : AuthService {
 
     @Transactional
-    override fun login(loginType: LoginType, token: String): AuthToken {
+    override suspend fun login(loginType: LoginType, token: String): AuthToken {
         return if (loginType == LoginType.REFRESH) {
             loginByRefreshToken(token)
         } else {
@@ -23,7 +23,7 @@ internal class AuthServiceImpl(
     }
 
     @Transactional
-    override fun getAuthUserByAccessToken(token: String): AuthUser? {
+    override suspend fun getAuthUserByAccessToken(token: String): AuthUser? {
         return try {
             val accessToken = tokenService.validateAccessToken(token)
             AuthUser(accessToken.userId)
@@ -32,7 +32,7 @@ internal class AuthServiceImpl(
         }
     }
 
-    private fun socialLogin(loginType: LoginType, token: String): AuthToken {
+    private suspend fun socialLogin(loginType: LoginType, token: String): AuthToken {
         val socialUser = socialAuthClient.login(loginType, token)
 
         val authUser = getOrCreateAuthUser(loginType, socialUser.id)
@@ -43,7 +43,7 @@ internal class AuthServiceImpl(
         )
     }
 
-    private fun loginByRefreshToken(tokenValue: String): AuthToken {
+    private suspend fun loginByRefreshToken(tokenValue: String): AuthToken {
         val token = tokenService.validateRefreshToken(tokenValue)
 
         return AuthToken(
@@ -52,7 +52,7 @@ internal class AuthServiceImpl(
         )
     }
 
-    private fun getOrCreateAuthUser(loginType: LoginType, socialUserId: String): AuthUser {
+    private suspend fun getOrCreateAuthUser(loginType: LoginType, socialUserId: String): AuthUser {
         val authUser = authQueryRepository.findAuthUser(loginType, socialUserId)
         if (authUser != null) return authUser
 

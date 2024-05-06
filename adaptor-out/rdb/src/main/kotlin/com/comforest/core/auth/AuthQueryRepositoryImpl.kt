@@ -1,5 +1,7 @@
 package com.comforest.core.auth
 
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Repository
 
@@ -7,16 +9,16 @@ import org.springframework.stereotype.Repository
 internal class AuthQueryRepositoryImpl(
     private val authSocialRepository: AuthSocialRepository,
 ) : AuthQueryRepository {
-    override fun findAuthUser(id: UserId): AuthUser? {
-        val authSocial = authSocialRepository.findByUserId(id.value) ?: return null
+    override suspend fun findAuthUser(id: UserId): AuthUser? = withContext(Dispatchers.IO) {
+        val authSocial = authSocialRepository.findByUserId(id.value) ?: return@withContext null
 
-        return AuthUser(UserId(authSocial.userId))
+        AuthUser(UserId(authSocial.userId))
     }
 
-    override fun findAuthUser(socialType: LoginType, socialId: String): AuthUser? {
+    override suspend fun findAuthUser(socialType: LoginType, socialId: String): AuthUser? = withContext(Dispatchers.IO) {
         val authSocial =
-            authSocialRepository.findByIdOrNull(SocialInfo(socialType.toSocialType(), socialId)) ?: return null
+            authSocialRepository.findByIdOrNull(SocialInfo(socialType.toSocialType(), socialId)) ?: return@withContext null
 
-        return AuthUser(UserId(authSocial.userId))
+        AuthUser(UserId(authSocial.userId))
     }
 }

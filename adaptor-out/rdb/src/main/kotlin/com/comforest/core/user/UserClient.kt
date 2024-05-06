@@ -3,6 +3,8 @@ package com.comforest.core.user
 import com.comforest.core.NotFoundUserException
 import com.comforest.core.auth.UserId
 import jakarta.transaction.Transactional
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Component
 
@@ -10,22 +12,24 @@ import org.springframework.stereotype.Component
 internal class UserClient(
     private val userRepository: UserRepository,
 ) : UserQueryRepository, UserCommandRepository {
-    override fun getUser(userId: UserId): User? {
+    override suspend fun getUser(userId: UserId): User? = withContext(Dispatchers.IO) {
         val userEntity = userRepository.findByIdOrNull(userId.value) ?: throw NotFoundUserException
 
-        return userEntity.toDomain()
+        userEntity.toDomain()
     }
 
     @Transactional
-    override fun updateUser(user: User) {
-        val entity = userRepository.findByIdOrNull(user.id.value) ?: throw NotFoundUserException
+    override suspend fun updateUser(user: User) {
+        withContext(Dispatchers.IO) {
+            val entity = userRepository.findByIdOrNull(user.id.value) ?: throw NotFoundUserException
 
-        entity.name = user.nickname
+            entity.name = user.nickname
 
-        userRepository.save(entity)
+            userRepository.save(entity)
+        }
     }
 
-    override fun deleteUser(userId: UserId) {
+    override suspend fun deleteUser(userId: UserId) = withContext(Dispatchers.IO) {
         userRepository.deleteById(userId.value)
     }
 }
