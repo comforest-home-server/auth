@@ -1,16 +1,13 @@
-package com.comforest.core.auth.token.jwt
+package com.comforest.core.jwt
 
-import com.comforest.core.auth.token.jwt.key.JwtKey
+import com.comforest.core.jwt.key.JwtKey
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
 import io.jsonwebtoken.JwtException
 import io.jsonwebtoken.Jwts
 import java.time.LocalDateTime
 import java.util.Base64
-import org.springframework.stereotype.Component
 
-@Component
 class JwtUtils(
     val objectMapper: ObjectMapper,
 ) {

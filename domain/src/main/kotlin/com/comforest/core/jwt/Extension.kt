@@ -1,4 +1,4 @@
-package com.comforest.core.auth.token.jwt
+package com.comforest.core.jwt
 
 import java.time.LocalDateTime
 import java.time.ZoneId

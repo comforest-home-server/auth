@@ -2,8 +2,8 @@ package com.comforest.core.auth.token
 
 import com.comforest.core.auth.Token
 import com.comforest.core.auth.UserId
-import com.comforest.core.auth.token.jwt.JwtUtils
-import com.comforest.core.auth.token.jwt.key.JwtKey
+import com.comforest.core.jwt.JwtUtils
+import com.comforest.core.jwt.key.JwtKey
 import java.time.LocalDateTime
 
 internal class JwtUtilsWrapper(

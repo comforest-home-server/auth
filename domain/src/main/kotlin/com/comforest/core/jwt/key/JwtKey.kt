@@ -1,4 +1,4 @@
-package com.comforest.core.auth.token.jwt.key
+package com.comforest.core.jwt.key
 
 import java.security.Key
 

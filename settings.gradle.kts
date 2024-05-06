@@ -15,6 +15,7 @@ pluginManagement {
 include(
     "app:api",
     "adaptor-out:rdb",
+    "adaptor-out:social",
     "core",
     "domain",
     "port-in",
