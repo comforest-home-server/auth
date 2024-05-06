@@ -12,5 +12,11 @@ pluginManagement {
     }
 }
 
-rootProject.name = "auth"
-
+include(
+    "app:api",
+    "adaptor-out:rdb",
+    "core",
+    "domain",
+    "port-in",
+    "port-out",
+)

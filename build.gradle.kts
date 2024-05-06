@@ -20,7 +20,6 @@ tasks {
     withType<Test> { useJUnitPlatform() }
 }
 
-
 subprojects {
     apply(plugin = "kotlin")
     apply(plugin = "kotlin-kapt")
@@ -33,8 +32,10 @@ subprojects {
 
     dependencies {
         val kotestVersion: String by properties
+        val coroutineVersion by properties
 
         implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.15.0")
+        implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutineVersion")
 
         testImplementation("io.kotest:kotest-runner-junit5-jvm:$kotestVersion")
         testImplementation("io.kotest:kotest-assertions-core:$kotestVersion")
@@ -45,7 +46,7 @@ subprojects {
         withType<KotlinCompile> {
             kotlinOptions {
                 freeCompilerArgs = listOf("-Xjsr305=strict")
-                jvmTarget = "17"
+                jvmTarget = "19"
             }
         }
         test {
