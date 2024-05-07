@@ -19,7 +19,7 @@ internal class AuthSocialEntity(
 ) : AuditingEntity() {
     @Id
     @Enumerated(EnumType.STRING)
-    @Column(name = "social_type")
+    @Column(name = "social_type", columnDefinition = "varchar(255)")
     var socialType: SocialType = socialType
         protected set
 
