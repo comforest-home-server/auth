@@ -20,4 +20,5 @@ include(
     "domain",
     "port-in",
     "port-out",
+    "support:yaml",
 )
