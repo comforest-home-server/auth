@@ -10,6 +10,7 @@ dependencies {
     val coroutineVersion by properties
 
     implementation(project(":adaptor-out:rdb"))
+    implementation(project(":adaptor-out:redis"))
     implementation(project(":adaptor-out:social"))
     api(project(":domain"))
     api(project(":port-in"))

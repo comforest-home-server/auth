@@ -28,13 +28,12 @@ internal class RefreshTokenClient(
         repository.deleteByUserId(userId.value)
     }
 
-    private fun RefreshTokenEntity.toToken(): Token {
-        return Token(
+    private fun RefreshTokenEntity.toToken(): Token =
+        Token(
             value = this.refreshToken,
             userId = UserId(this.userId),
             expiredAt = this.expiredAt,
         )
-    }
 
     private fun Token.toRefreshTokenEntity(): RefreshTokenEntity =
         RefreshTokenEntity(
