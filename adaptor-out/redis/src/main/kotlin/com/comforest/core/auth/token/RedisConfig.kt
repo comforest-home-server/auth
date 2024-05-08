@@ -5,6 +5,4 @@ import org.springframework.data.redis.repository.configuration.EnableRedisReposi
 
 @Configuration
 @EnableRedisRepositories
-class RedisConfig {
-
-}
+class RedisConfig

@@ -7,12 +7,12 @@ import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
 
 @Service
-internal class AuthServiceImpl(
+internal class AuthUseCaseImpl(
     private val socialAuthClient: SocialLoginClient,
     private val authCommandRepository: AuthCommandRepository,
     private val authQueryRepository: AuthQueryRepository,
     private val tokenService: TokenService,
-) : AuthService {
+) : AuthUseCase {
 
     @Transactional
     override suspend fun login(serviceId: ServiceId, loginType: LoginType, token: String): AuthToken {

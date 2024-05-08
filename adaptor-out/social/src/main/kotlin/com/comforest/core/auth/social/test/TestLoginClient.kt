@@ -7,15 +7,15 @@ internal interface TestLoginClient {
     fun login(token: String): SocialUser
 }
 
-internal class SandboxTestLoginClient : TestLoginClient{
+internal class SandboxTestLoginClient : TestLoginClient {
     override fun login(token: String): SocialUser {
-        if(token.startsWith("test").not()) throw SocialLoginFailedException()
+        if (token.startsWith("test").not()) throw SocialLoginFailedException()
 
         return TestSocialUser(token)
     }
 }
 
-internal class ProdcutionTestLoginClient : TestLoginClient{
+internal class ProdcutionTestLoginClient : TestLoginClient {
     override fun login(token: String): SocialUser {
         throw UnsupportedOperationException()
     }
