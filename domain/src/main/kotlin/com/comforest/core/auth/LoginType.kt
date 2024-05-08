@@ -5,5 +5,6 @@ enum class LoginType {
     NAVER_ACCESS_TOKEN,
     GOOGLE_ID_TOKEN,
     APPLE_ID_TOKEN,
+    TEST,
     REFRESH,
 }

@@ -19,7 +19,7 @@ import jakarta.persistence.Table
 internal class AuthSocialEntity(
     socialType: SocialType,
     socialId: String,
-    userId: Long,
+    user: UserEntity,
 ) : AuditingEntity() {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,6 +37,6 @@ internal class AuthSocialEntity(
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    lateinit var user: UserEntity
+    var user: UserEntity = user
         protected set
 }
