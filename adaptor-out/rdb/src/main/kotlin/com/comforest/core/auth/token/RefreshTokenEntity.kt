@@ -16,18 +16,14 @@ internal class RefreshTokenEntity(
 ) : AuditingEntity() {
     @Id
     @Column(name = "refresh_token_id")
-    var id: Long = 0
-        protected set
+    val id: Long = 0
 
     @Column(name = "user_id")
-    var userId: Long = userId
-        protected set
+    val userId: Long = userId
 
     @Column(name = "refresh_token", columnDefinition = "BINARY(45)")
-    var refreshToken: ByteArray = refreshToken
-        protected set
+    val refreshToken: ByteArray = refreshToken
 
     @Column(name = "expired_at")
-    var expiredAt: LocalDateTime = expiredAt
-        protected set
+    val expiredAt: LocalDateTime = expiredAt
 }

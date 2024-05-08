@@ -17,8 +17,7 @@ internal class ServiceKeyEntity : AuditingEntity() {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "service_key_id")
-    var id: Long = 0
-        protected set
+    val id: Long = 0
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "service_id")

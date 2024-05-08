@@ -18,23 +18,16 @@ internal class UserEntity : AuditingEntity() {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id", nullable = false)
-    var id: Long = 0
-        protected set
+    val id: Long = 0
 
     @Column(name = "service_id")
     val service: Long = 0
 
     @Column(name = "name")
     var name: String? = null
+        protected set
 
     @Column(name = "deleted")
     var deleted: Boolean = false
         protected set
-
-    companion object {
-        fun of(id: Long): UserEntity =
-            UserEntity().apply {
-                this.id = id
-            }
-    }
 }

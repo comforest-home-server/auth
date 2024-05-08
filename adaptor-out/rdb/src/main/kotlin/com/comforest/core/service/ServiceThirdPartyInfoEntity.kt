@@ -19,8 +19,7 @@ internal class ServiceThirdPartyInfoEntity : AuditingEntity() {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "service_third_party_info_id")
-    var id: Long = 0
-        protected set
+    val id: Long = 0
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "service_id")

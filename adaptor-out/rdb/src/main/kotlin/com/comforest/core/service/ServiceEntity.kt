@@ -18,8 +18,7 @@ internal class ServiceEntity : AuditingEntity() {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "service_id")
-    var id: Long = 0
-        protected set
+    val id: Long = 0
 
     @Column(name = "description")
     val description: String = ""
