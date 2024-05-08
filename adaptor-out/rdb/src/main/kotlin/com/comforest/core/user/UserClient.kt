@@ -10,10 +10,10 @@ import org.springframework.stereotype.Component
 
 @Component
 internal class UserClient(
-    private val userRepository: UserRepository,
+    private val userJpaRepository: UserJpaRepository,
 ) : UserQueryRepository, UserCommandRepository {
     override suspend fun getUser(userId: UserId): User? = withContext(Dispatchers.IO) {
-        val userEntity = userRepository.findByIdOrNull(userId.value) ?: throw NotFoundUserException
+        val userEntity = userJpaRepository.findByIdOrNull(userId.value) ?: throw NotFoundUserException
 
         userEntity.toDomain()
     }
@@ -21,16 +21,16 @@ internal class UserClient(
     @Transactional
     override suspend fun updateUser(user: User) {
         withContext(Dispatchers.IO) {
-            val entity = userRepository.findByIdOrNull(user.id.value) ?: throw NotFoundUserException
+            val entity = userJpaRepository.findByIdOrNull(user.id.value) ?: throw NotFoundUserException
 
             entity.name = user.nickname
 
-            userRepository.save(entity)
+            userJpaRepository.save(entity)
         }
     }
 
     override suspend fun deleteUser(userId: UserId) = withContext(Dispatchers.IO) {
-        userRepository.deleteById(userId.value)
+        userJpaRepository.deleteById(userId.value)
     }
 }
 

@@ -1,40 +1,40 @@
 package com.comforest.core.auth
 
-import com.comforest.core.auth.token.TokenCommandRepository
+import com.comforest.core.auth.token.AccessTokenRepository
+import com.comforest.core.auth.token.RefreshTokenRepository
 import com.comforest.core.auth.token.TokenPolicy
-import com.comforest.core.auth.token.TokenQueryRepository
 
 internal class TokenService(
     private val accessTokenPolicy: TokenPolicy,
     private val refreshTokenPolicy: TokenPolicy,
-    private val tokenQueryRepository: TokenQueryRepository,
-    private val tokenCommandRepository: TokenCommandRepository,
+    private val accessTokenRepository: AccessTokenRepository,
+    private val refreshTokenRepository: RefreshTokenRepository,
 ) {
     suspend fun generateAccessToken(userId: UserId): Token {
         val token = accessTokenPolicy.generate(userId)
-        tokenCommandRepository.saveAccessToken(token)
+        accessTokenRepository.save(token)
         return token
     }
 
     suspend fun generateRefreshToken(userId: UserId): Token {
         val token = refreshTokenPolicy.generate(userId)
-        tokenCommandRepository.saveRefreshToken(token)
+        refreshTokenRepository.save(token)
         return token
     }
 
     suspend fun renewRefreshToken(token: Token): Token {
         token.validate()
-        tokenCommandRepository.removeRefreshToken(token)
+        refreshTokenRepository.remove(token)
         return generateRefreshToken(token.userId)
     }
 
     suspend fun validateAccessToken(value: String): Token {
         accessTokenPolicy.assertValidate(value)
-        return tokenQueryRepository.findAccessToken(value).validate()
+        return accessTokenRepository.findByValue(value).validate()
     }
 
     suspend fun validateRefreshToken(value: String): Token {
         refreshTokenPolicy.assertValidate(value)
-        return tokenQueryRepository.findRefreshToken(value).validate()
+        return refreshTokenRepository.findByValue(value).validate()
     }
 }

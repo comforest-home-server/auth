@@ -1,9 +1,9 @@
 package com.comforest.core.auth
 
+import com.comforest.core.auth.token.AccessTokenRepository
 import com.comforest.core.auth.token.OpaqueTokenUtils
-import com.comforest.core.auth.token.TokenCommandRepository
+import com.comforest.core.auth.token.RefreshTokenRepository
 import com.comforest.core.auth.token.TokenPolicy
-import com.comforest.core.auth.token.TokenQueryRepository
 import java.time.Duration
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
@@ -32,13 +32,13 @@ class AuthConfiguration {
 
     @Bean
     internal fun tokenService(
-        tokenQueryRepository: TokenQueryRepository,
-        tokenCommandRepository: TokenCommandRepository,
+        accessTokenRepository: AccessTokenRepository,
+        refreshTokenRepository: RefreshTokenRepository,
     ): TokenService =
         TokenService(
             accessTokenPolicy(),
             refreshTokenPolicy(),
-            tokenQueryRepository,
-            tokenCommandRepository,
+            accessTokenRepository,
+            refreshTokenRepository,
         )
 }
