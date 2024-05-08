@@ -1,14 +1,17 @@
 package com.comforest.core.auth
 
 import com.comforest.core.AuditingEntity
+import com.comforest.core.user.UserEntity
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
 import jakarta.persistence.Enumerated
+import jakarta.persistence.FetchType
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
-import jakarta.persistence.IdClass
+import jakarta.persistence.JoinColumn
+import jakarta.persistence.ManyToOne
 import jakarta.persistence.Table
 
 @Table(name = "auth_social")
@@ -32,7 +35,8 @@ internal class AuthSocialEntity(
     var socialId: String = socialId
         protected set
 
-    @Column(name = "user_id")
-    var userId: Long = userId
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    lateinit var user: UserEntity
         protected set
 }

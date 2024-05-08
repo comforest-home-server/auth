@@ -20,6 +20,9 @@ internal class ServiceEntity : AuditingEntity() {
     @Column(name = "service_id")
     val id: Long = 0
 
+    @Column(name = "code")
+    val code: String = ""
+
     @Column(name = "description")
     val description: String = ""
 

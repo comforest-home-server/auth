@@ -1,6 +1,7 @@
 create table service
 (
     service_id  bigint   NOT NULL AUTO_INCREMENT COMMENT 'PK',
+    code        varchar(20) COMMENT '통신에 쓰일 코드',
     description varchar(500) COMMENT '서비스 설명',
     deleted     bit      NOT NULL COMMENT '서비스 삭제 여부',
     created_at  datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,

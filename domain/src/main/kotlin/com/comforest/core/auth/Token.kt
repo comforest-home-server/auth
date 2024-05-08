@@ -1,20 +1,13 @@
 package com.comforest.core.auth
 
-import com.comforest.core.ExpiredTokenException
-import com.comforest.core.InvalidTokenException
+import com.comforest.core.service.ServiceId
 import java.time.LocalDateTime
 import java.util.Base64
 
-data class Token(
-    val value: String,
-    val userId: UserId,
-    val expiredAt: LocalDateTime,
-) {
-    constructor(value: ByteArray, userId: UserId, expiredAt: LocalDateTime) : this(
-        Base64.getEncoder().encodeToString(value),
-        userId,
-        expiredAt,
-    )
+interface TokenSpec {
+    val value: String
+    val userId: UserId
+    val expiredAt: LocalDateTime
 
     val isExpired: Boolean
         get() = expiredAt.isBefore(LocalDateTime.now())
@@ -22,11 +15,22 @@ data class Token(
     fun toBinary(): ByteArray = value.toBinary()
 }
 
-fun Token?.validate(): Token {
-    if (this == null) throw InvalidTokenException
-    if (this.isExpired) throw ExpiredTokenException
-    return this
+data class Token(
+    override val value: String,
+    override val userId: UserId,
+    override val expiredAt: LocalDateTime,
+) : TokenSpec {
+    constructor(value: ByteArray, userId: UserId, expiredAt: LocalDateTime) : this(
+        Base64.getEncoder().encodeToString(value),
+        userId,
+        expiredAt,
+    )
 }
+
+data class TokenWithServiceId(
+    val token: Token,
+    val serviceId: ServiceId,
+) : TokenSpec by token
 
 fun String.toBinary(): ByteArray {
     return Base64.getDecoder().decode(this)

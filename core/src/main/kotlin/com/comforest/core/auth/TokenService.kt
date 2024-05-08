@@ -1,8 +1,11 @@
 package com.comforest.core.auth
 
+import com.comforest.core.ExpiredTokenException
+import com.comforest.core.InvalidTokenException
 import com.comforest.core.auth.token.AccessTokenRepository
 import com.comforest.core.auth.token.RefreshTokenRepository
 import com.comforest.core.auth.token.TokenPolicy
+import com.comforest.core.service.ServiceId
 
 internal class TokenService(
     private val accessTokenPolicy: TokenPolicy,
@@ -10,9 +13,9 @@ internal class TokenService(
     private val accessTokenRepository: AccessTokenRepository,
     private val refreshTokenRepository: RefreshTokenRepository,
 ) {
-    suspend fun generateAccessToken(userId: UserId): Token {
+    suspend fun generateAccessToken(userId: UserId, serviceId: ServiceId): Token {
         val token = accessTokenPolicy.generate(userId)
-        accessTokenRepository.save(token)
+        accessTokenRepository.save(TokenWithServiceId(token, serviceId))
         return token
     }
 
@@ -23,18 +26,26 @@ internal class TokenService(
     }
 
     suspend fun renewRefreshToken(token: Token): Token {
-        token.validate()
+        validateToken(token)
         refreshTokenRepository.remove(token)
         return generateRefreshToken(token.userId)
     }
 
-    suspend fun validateAccessToken(value: String): Token {
+    suspend fun validateAccessToken(value: String): TokenWithServiceId {
         accessTokenPolicy.assertValidate(value)
-        return accessTokenRepository.findByValue(value).validate()
+        val token = accessTokenRepository.findByValue(value)
+        return validateToken(token)
     }
 
     suspend fun validateRefreshToken(value: String): Token {
         refreshTokenPolicy.assertValidate(value)
-        return refreshTokenRepository.findByValue(value).validate()
+        val token = refreshTokenRepository.findByValue(value)
+        return validateToken(token)
+    }
+
+    private fun <T : TokenSpec> validateToken(token: T?): T {
+        if (token == null) throw InvalidTokenException
+        if (token.isExpired) throw ExpiredTokenException
+        return token
     }
 }

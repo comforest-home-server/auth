@@ -2,6 +2,7 @@ package com.comforest.core.auth
 
 import com.comforest.core.BaseException
 import com.comforest.core.auth.social.SocialLoginClient
+import com.comforest.core.service.ServiceId
 import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
 
@@ -14,11 +15,11 @@ internal class AuthServiceImpl(
 ) : AuthService {
 
     @Transactional
-    override suspend fun login(loginType: LoginType, token: String): AuthToken {
+    override suspend fun login(serviceId: ServiceId, loginType: LoginType, token: String): AuthToken {
         return if (loginType == LoginType.REFRESH) {
-            loginByRefreshToken(token)
+            loginByRefreshToken(token, serviceId)
         } else {
-            socialLogin(loginType, token)
+            socialLogin(serviceId, loginType, token)
         }
     }
 
@@ -26,36 +27,38 @@ internal class AuthServiceImpl(
     override suspend fun getAuthUserByAccessToken(token: String): AuthUser? {
         return try {
             val accessToken = tokenService.validateAccessToken(token)
-            AuthUser(accessToken.userId)
+            AuthUser(accessToken.userId, ServiceId(0))
         } catch (e: BaseException) {
             null
         }
     }
 
-    private suspend fun socialLogin(loginType: LoginType, token: String): AuthToken {
+    private suspend fun socialLogin(serviceId: ServiceId, loginType: LoginType, token: String): AuthToken {
         val socialUser = socialAuthClient.login(loginType, token)
 
-        val authUser = getOrCreateAuthUser(loginType, socialUser.id)
+        val authUser = getOrCreateAuthUser(serviceId, loginType, socialUser.id)
 
         return AuthToken(
-            accessToken = tokenService.generateAccessToken(authUser.id),
+            accessToken = tokenService.generateAccessToken(authUser.id, serviceId),
             refreshToken = tokenService.generateRefreshToken(authUser.id),
         )
     }
 
-    private suspend fun loginByRefreshToken(tokenValue: String): AuthToken {
+    private suspend fun loginByRefreshToken(tokenValue: String, serviceId: ServiceId): AuthToken {
         val token = tokenService.validateRefreshToken(tokenValue)
 
         return AuthToken(
-            accessToken = tokenService.generateAccessToken(token.userId),
+            accessToken = tokenService.generateAccessToken(token.userId, serviceId),
             refreshToken = tokenService.renewRefreshToken(token),
         )
     }
 
-    private suspend fun getOrCreateAuthUser(loginType: LoginType, socialUserId: String): AuthUser {
-        val authUser = authQueryRepository.findAuthUser(loginType, socialUserId)
+    private suspend fun getOrCreateAuthUser(serviceId: ServiceId, loginType: LoginType, socialUserId: String): AuthUser {
+        val authUser = authQueryRepository.findAuthUserList(loginType, socialUserId)
+            .firstOrNull { it.serviceId == serviceId }
+
         if (authUser != null) return authUser
 
-        return authCommandRepository.registerUser(loginType, socialUserId)
+        return authCommandRepository.registerUser(serviceId, loginType, socialUserId)
     }
 }

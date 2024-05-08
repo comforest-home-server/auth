@@ -14,18 +14,22 @@ import org.hibernate.annotations.Where
 @Table(name = "user")
 @Where(clause = "deleted = false")
 @SQLDelete(sql = "UPDATE user SET deleted=true, name=null WHERE user_id = ?")
-internal class UserEntity : AuditingEntity() {
+internal class UserEntity() : AuditingEntity() {
+    constructor(serviceId: Long) : this() {
+        this.serviceId = serviceId
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id", nullable = false)
     val id: Long = 0
 
     @Column(name = "service_id")
-    val service: Long = 0
+    var serviceId: Long = 0
+        protected set
 
     @Column(name = "name")
     var name: String? = null
-        protected set
 
     @Column(name = "deleted")
     var deleted: Boolean = false

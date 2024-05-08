@@ -5,6 +5,7 @@ import com.comforest.core.auth.client.dto.LoginRequest
 import com.comforest.core.auth.client.dto.LoginResponse
 import com.comforest.core.auth.client.dto.toResponse
 import com.comforest.core.auth.swagger.ApiTag
+import com.comforest.core.service.ServiceId
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -23,7 +24,7 @@ class ClientController(
     suspend fun login(
         @RequestBody request: LoginRequest,
     ): LoginResponse {
-        return authService.login(request.type, request.token).toResponse()
+        return authService.login(ServiceId(0), request.type, request.token).toResponse()
     }
 
     @Operation(summary = "로그아웃")

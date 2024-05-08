@@ -8,6 +8,7 @@ import org.springframework.data.redis.core.TimeToLive
 internal class AccessTokenEntity(
     token: String,
     userId: Long,
+    serviceId: Long,
     ttl: Long,
 ) {
     @Id
@@ -15,6 +16,9 @@ internal class AccessTokenEntity(
         protected set
 
     var userId: Long = userId
+        protected set
+
+    var serviceId: Long = serviceId
         protected set
 
     @TimeToLive
