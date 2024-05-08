@@ -24,7 +24,7 @@ dependencies {
     val springVersion by properties
 
     api(project(":domain"))
-    api(project(":port-out"))
+    api(project(":port"))
 
     implementation("org.springframework.boot:spring-boot-starter-data-jpa:$springVersion")
     implementation("org.jetbrains.kotlin:kotlin-reflect")

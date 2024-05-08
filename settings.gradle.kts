@@ -14,12 +14,11 @@ pluginManagement {
 
 include(
     "app:api",
-    "adaptor-out:rdb",
-    "adaptor-out:redis",
-    "adaptor-out:social",
+    "adaptor:rdb",
+    "adaptor:redis",
+    "adaptor:social",
     "core",
     "domain",
-    "port-in",
-    "port-out",
+    "port",
     "support:yaml",
 )

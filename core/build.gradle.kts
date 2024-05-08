@@ -9,12 +9,12 @@ dependencies {
     val springVersion by properties
     val coroutineVersion by properties
 
-    implementation(project(":adaptor-out:rdb"))
-    implementation(project(":adaptor-out:redis"))
-    implementation(project(":adaptor-out:social"))
+    implementation(project(":adaptor:rdb"))
+    implementation(project(":adaptor:redis"))
+    implementation(project(":adaptor:social"))
     api(project(":domain"))
-    api(project(":port-in"))
-    implementation(project(":port-out"))
+    api(project(":port"))
+    implementation(project(":port"))
 
     implementation("org.springframework.boot:spring-boot-starter:$springVersion")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutineVersion")
