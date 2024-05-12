@@ -25,6 +25,7 @@ dependencies {
 
     api(project(":domain"))
     api(project(":port"))
+    implementation(project(":support:cache"))
 
     implementation("org.springframework.boot:spring-boot-starter-data-jpa:$springVersion")
     implementation("org.jetbrains.kotlin:kotlin-reflect")

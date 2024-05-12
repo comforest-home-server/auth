@@ -38,6 +38,8 @@ internal class AuthUseCaseImpl(
 
         val authUser = getOrCreateAuthUser(serviceId, loginType, socialUser.id)
 
+
+
         return AuthToken(
             accessToken = tokenService.generateAccessToken(authUser.id, serviceId),
             refreshToken = tokenService.generateRefreshToken(authUser.id),

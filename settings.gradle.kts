@@ -20,5 +20,6 @@ include(
     "core",
     "domain",
     "port",
+    "support:cache",
     "support:yaml",
 )
