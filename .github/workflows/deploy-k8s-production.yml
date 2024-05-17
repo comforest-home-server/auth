@@ -16,7 +16,7 @@ jobs:
     test:
         name: Test
         runs-on: ubuntu-latest
-        environment: sandbox
+        environment: production
 
         steps:
             -   name: Checkout
@@ -58,26 +58,46 @@ jobs:
                     --platform linux/arm64 \
                     --build-arg PHASE=${{ vars.PHASE }} \
                     -t $REGISTRY_URL/$IMAGE_NAME:$IMAGE_TAG .
-
             -   name: Push Docker image
                 run: docker push $REGISTRY_URL/$IMAGE_NAME:$IMAGE_TAG
 
-#       ArgoCd 적용
-#    deploy:
-#        name: Deploy
-#        runs-on: ubuntu-latest
-#        environment: production
-#        needs:
-#            - test
-#            - build
-#        steps:
-#            -   name: Checkout
-#                uses: actions/checkout@v3
-#
-#            -   name: Deploy k8s
-#                uses: actions-hub/kubectl@master
-#                env:
-#                    KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
-#                with:
-#                    args: set image deployment/$DEPLOYMENT $CONTAINER_NAME=$REGISTRY_URL/$IMAGE_NAME:$IMAGE_TAG
+    deploy:
+        name: Deploy
+        runs-on: ubuntu-latest
+        environment: production
+        needs:
+            - test
+            - build
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v2
+              with:
+                  repository: comforest-home-server/argocd-helm
+                  token: ${{ secrets.TOKEN_GITHUB }}
+
+            - name: Update YAML file
+              run: |
+                  # 변경할 YAML 파일 경로
+                  yaml_file="core/auth/api/values.yaml"
+                  
+                  # 변경할 키와 새 값
+                  key="tag"
+                  new_value="$IMAGE_TAG"
+                  
+                  # sed를 사용하여 키 값 변경
+                  sed -i -E "s/(\s*${key}:\s*).*/\1${new_value}/" $yaml_file            
+                  
+                  echo "Updated $key to $new_value in $yaml_file"
+                  
+                  cat $yaml_file
+
+            - name: Commit changes
+              run: |
+                  git config --global user.name 'github-actions[bot]'
+                  git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+                  git add core/auth/api/values.yaml
+                  git commit -m "Update YAML file value"
+                  git push
+              env:
+                  GITHUB_TOKEN: ${{ secrets.TOKEN_GITHUB }}
 
