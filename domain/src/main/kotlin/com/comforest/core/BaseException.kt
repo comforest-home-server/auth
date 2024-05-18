@@ -12,5 +12,6 @@ data object ExpiredTokenException : BaseException("Auth002", "만료된 토큰 �
 data object NotFoundUserException : BaseException("User001", "유저를 찾을 수 없습니다.")
 
 data object ServiceKeyNotFoundException : BaseException("Service001", "잘못된 서버 키입니다.")
+data object ServiceIdNotFoundException : BaseException("Service002", "잘못된 서버 키입니다.")
 
 class SocialLoginFailedException(cause: Throwable? = null) : BaseException("Auth003", "소셜 로그인이 실패했습니다.", cause)

@@ -1,6 +1,6 @@
 package com.comforest.core.service
 
-data class Service(
+data class ServiceInfo(
     val id: ServiceId,
     val code: String,
 )

@@ -4,5 +4,5 @@ import com.comforest.core.service.ServiceId
 
 interface AuthUseCase {
     suspend fun login(serviceId: ServiceId, loginType: LoginType, token: String): AuthToken
-    suspend fun getAuthUserByAccessToken(token: String): AuthUser?
+    suspend fun getAuthDetailInfoByAccessToken(token: String): AuthDetailInfo?
 }

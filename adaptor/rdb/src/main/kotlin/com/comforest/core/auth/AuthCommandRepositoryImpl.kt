@@ -15,11 +15,11 @@ internal class AuthCommandRepositoryImpl(
 ) : AuthCommandRepository {
 
     @Transactional
-    override suspend fun registerUser(serviceId: ServiceId, loginType: LoginType, socialId: String): AuthUser = withContext(Dispatchers.IO) {
+    override suspend fun registerUser(serviceId: ServiceId, loginType: LoginType, socialId: String): UserId = withContext(Dispatchers.IO) {
         val user = userJpaRepository.save(UserEntity(serviceId.value))
         authSocialJpaRepository.save(AuthSocialEntity(loginType.toSocialType(), socialId, user))
 
-        AuthUser(UserId(user.id), serviceId)
+        UserId(user.id)
     }
 
     override suspend fun deleteUser(userId: UserId) = withContext(Dispatchers.IO) {

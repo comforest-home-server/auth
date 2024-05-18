@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component
 internal class ServiceUseCaseImpl(
     private val serviceQueryRepository: ServiceQueryRepository,
 ) : ServiceUseCase {
-    override fun findServiceByKey(key: String): Service {
+    override fun findServiceByKey(key: String): ServiceInfo {
         return serviceQueryRepository.findByKey(key)
     }
 }

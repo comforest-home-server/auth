@@ -3,6 +3,8 @@ package com.comforest.core.auth
 import com.comforest.core.BaseException
 import com.comforest.core.auth.social.SocialLoginClient
 import com.comforest.core.service.ServiceId
+import com.comforest.core.service.ServiceQueryRepository
+import com.comforest.core.user.UserQueryRepository
 import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
 
@@ -11,6 +13,8 @@ internal class AuthUseCaseImpl(
     private val socialAuthClient: SocialLoginClient,
     private val authCommandRepository: AuthCommandRepository,
     private val authQueryRepository: AuthQueryRepository,
+    private val userQueryRepository: UserQueryRepository,
+    private val serviceInfoQueryRepository: ServiceQueryRepository,
     private val tokenService: TokenService,
 ) : AuthUseCase {
 
@@ -24,10 +28,12 @@ internal class AuthUseCaseImpl(
     }
 
     @Transactional
-    override suspend fun getAuthUserByAccessToken(token: String): AuthUser? {
+    override suspend fun getAuthDetailInfoByAccessToken(token: String): AuthDetailInfo? {
         return try {
             val accessToken = tokenService.validateAccessToken(token)
-            AuthUser(accessToken.userId, ServiceId(0))
+            val user = userQueryRepository.getUser(accessToken.userId) ?: return null
+            val serviceInfo = serviceInfoQueryRepository.findById(accessToken.serviceId)
+            AuthDetailInfo(user, serviceInfo)
         } catch (e: BaseException) {
             null
         }
@@ -36,11 +42,11 @@ internal class AuthUseCaseImpl(
     private suspend fun socialLogin(serviceId: ServiceId, loginType: LoginType, token: String): AuthToken {
         val socialUser = socialAuthClient.login(loginType, token)
 
-        val authUser = getOrCreateAuthUser(serviceId, loginType, socialUser.id)
+        val userId = getOrCreateUser(serviceId, loginType, socialUser.id)
 
         return AuthToken(
-            accessToken = tokenService.generateAccessToken(authUser.id, serviceId),
-            refreshToken = tokenService.generateRefreshToken(authUser.id),
+            accessToken = tokenService.generateAccessToken(userId, serviceId),
+            refreshToken = tokenService.generateRefreshToken(userId),
         )
     }
 
@@ -53,11 +59,10 @@ internal class AuthUseCaseImpl(
         )
     }
 
-    private suspend fun getOrCreateAuthUser(serviceId: ServiceId, loginType: LoginType, socialUserId: String): AuthUser {
-        val authUser = authQueryRepository.findAuthUserList(loginType, socialUserId)
-            .firstOrNull { it.serviceId == serviceId }
+    private suspend fun getOrCreateUser(serviceId: ServiceId, loginType: LoginType, socialUserId: String): UserId {
+        val authInfo = authQueryRepository.findAuthInfo(serviceId, loginType, socialUserId)
 
-        if (authUser != null) return authUser
+        if (authInfo != null) return authInfo.userId
 
         return authCommandRepository.registerUser(serviceId, loginType, socialUserId)
     }

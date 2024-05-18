@@ -10,13 +10,14 @@ internal class AuthQueryRepositoryImpl(
     private val authSocialJpaRepository: AuthSocialJpaRepository,
 ) : AuthQueryRepository {
 
-    override suspend fun findAuthUserList(socialType: LoginType, socialId: String): List<AuthUser> = withContext(Dispatchers.IO) {
+    override suspend fun findAuthInfo(serviceId: ServiceId, socialType: LoginType, socialId: String): AuthInfo? = withContext(Dispatchers.IO) {
         authSocialJpaRepository.findBySocialTypeAndSocialId(socialType.toSocialType(), socialId)
-            .map { it.toDomain() }
+            .firstOrNull { it.user.serviceId == serviceId.value }
+            ?.toDomain()
     }
 
-    private fun AuthSocialEntity.toDomain(): AuthUser = AuthUser(
-        id = UserId(this.user.id),
+    private fun AuthSocialEntity.toDomain(): AuthInfo = AuthInfo(
+        userId = UserId(this.user.id),
         serviceId = ServiceId(this.user.serviceId),
     )
 }
