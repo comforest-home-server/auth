@@ -1,6 +1,6 @@
 package com.comforest.core.auth
 
-import com.comforest.core.BaseException
+import com.comforest.core.CustomException
 import com.comforest.core.auth.social.SocialLoginClient
 import com.comforest.core.service.ServiceId
 import com.comforest.core.service.ServiceQueryRepository
@@ -34,7 +34,7 @@ internal class AuthUseCaseImpl(
             val user = userQueryRepository.getUser(accessToken.userId) ?: return null
             val serviceInfo = serviceInfoQueryRepository.findById(accessToken.serviceId)
             AuthDetailInfo(user, serviceInfo)
-        } catch (e: BaseException) {
+        } catch (e: CustomException) {
             null
         }
     }

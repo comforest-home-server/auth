@@ -1,5 +1,6 @@
 package com.comforest.core.auth.server
 
+import com.comforest.core.InvalidAuthorizationException
 import com.comforest.core.auth.AuthUseCase
 import com.comforest.core.auth.server.dto.PassportResponse
 import com.comforest.core.auth.server.dto.toResponse
@@ -21,7 +22,13 @@ class ServerController(
     suspend fun getPassport(
         @RequestHeader(name = "Authorization") auth: String,
     ): PassportResponse {
-        val authInfo = authUseCase.getAuthDetailInfoByAccessToken(auth) ?: throw IllegalArgumentException()
-        return authInfo.toResponse()
+        if (auth.lowercase().startsWith("bearer ")) {
+            val token = auth.substring(7)
+
+            val authInfo = authUseCase.getAuthDetailInfoByAccessToken(token) ?: throw InvalidAuthorizationException
+            return authInfo.toResponse()
+        }
+
+        throw InvalidAuthorizationException
     }
 }
